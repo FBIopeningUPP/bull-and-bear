@@ -3,7 +3,7 @@ export class UIController {
         this.tabs = document.querySelectorAll('.tab');
         this.btnPause = document.getElementById('btn-pause');
         this.btnSpeed1 = document.getElementById('btn-speed-1');
-        this.btnSpeed2 = document.getElementById('btn-speed-2');
+        this.btnSpeed5 = document.getElementById('btn-speed-5');
 
         this.onTabChange = null;
         this.onSpeedChange = null;
@@ -28,7 +28,7 @@ export class UIController {
 
         this.btnSpeed1.addEventListener('click', () => {
             this.btnSpeed1.classList.add('active');
-            this.btnSpeed2.classList.remove('active');
+            this.btnSpeed5.classList.remove('active');
             if (this.onSpeedChange) this.onSpeedChange(500);
         });
 
@@ -41,10 +41,10 @@ export class UIController {
         this.btnPause.addEventListener('click', () => {
             if (this.btnPause.innerText === 'Pause') {
                 this.btnPause.innerText = 'Play';
-                this.btnPause.classList.add('acitve');
+                this.btnPause.classList.add('active');
             } else {
                 this.btnPause.innerText = 'Pause';
-                this.btnPause.classList.remove('acitve');
+                this.btnPause.classList.remove('active');
             }
 
             if (this.onPauseToggle) this.onPauseToggle();
