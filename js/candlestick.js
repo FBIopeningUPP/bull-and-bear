@@ -44,8 +44,8 @@ export class CandlestickChart {
         }
 
         const padding = (maxPrice - minPrice) * 0.05;
-        minPrice += padding;
-        maxPrice -= padding;
+        minPrice -= padding;
+        maxPrice += padding;
 
         const priceRange = maxPrice - minPrice;
 
