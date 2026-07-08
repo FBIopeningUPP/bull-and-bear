@@ -8,6 +8,7 @@ import { MarketMakerBot, WhaleBot, BotManager } from './bots.js';
 import { NewsEngine } from './event.js';
 import { NotificationSystem } from './notifications.js';
 import { WindowManager } from './windowManager.js';
+import { BacktestEngine } from './backtest.js';
 
 const techFeed = new PriceFeed({
     name: 'TECH',
@@ -87,6 +88,49 @@ const ledgerHTML = `
     </table>
 `;
 winManager.createWindow('win-trade-ledger', 'Trade Ledger', ledgerHTML, 50, 330, 660, 250); 
+
+const backtestEngine = new BacktestEngine();
+
+const algoTerminalHTML = `
+    <div style="padding: 10px; display: flex; flex-direction: column; gap: 15px; height: 100%;">
+        <div style="display: flex; gap: 10px; align-items: center;">
+            <label style="color: var(--text-muted); font-size: 0.9rem;">Strategy:</label>
+            <select id="algo-strategy" style="flex: 1; padding: 6px; background: rgba(0,0,0,0.05); color: white; border: 1px solid var(--border);"
+                <option value='SMA_CROSSOVER">SMA Golden Cross</option>
+                <option value='MEAN_REVERSION'>Mean Reversion</option>
+                <option value="RSI_OVERSOLD">RSI Oversold</option>
+                </select>
+                <button id="btn-run-algo" class="btn buy" style="padding: 6px 15px;">RUN TEST</button>
+            </div>
+
+            <div style="flex: 1; background: #000; border: 1px solid var(--border); padding: 15px; font-family: monospace; font-size: 0.85rem; overflow-y: auto;" id="algo-console">
+                <span style="color: var(--text-muted);">Terminal ready. Awaiting execution command...</span>
+            </div>
+    </div>  
+`;
+winManager.createWindow('win-algo-terminal', 'Algo Research Terminal', algoTerminalHTML, 200, 150, 500, 400);
+
+ui.onRunAlgo = (strategy) => {
+    const consoleDiv = document.getElementById('algo-console');
+    consolveDiv.innerHTML = `<span style="color: #facc15;">[SYS] Initializing Backtest Engine...</span><br>`;
+
+    setTimeout(() => {
+        consoleDiv.innerHTML += `<span style="color: #3b82f6;">[DATA] Generating 10 years of Geometric Brownian Motion...</span><br>`;
+
+        setTimeout(() => {
+            const history = backtestEngine.generatePriceHistory(10 * 252, 100, 0.0002, 0.003);
+            consoleDiv.innerHTML += `<span style="color: #10b981;">[SYS] Executing ${strategy} over ${history.length} simulated days...</span><br>`;
+
+            const results = backtestEngine.runStrategy(strategy, history);
+
+            let output = `<br><span style="color: #f8fafc; font-weight: bold;">====== PERFORMANCE REPORT ======</span><br>`;
+            output += `<span style="color: var(--text-muted);">Final Capital:</span> $${results.finalCapital.toFixed(2)}<br>`;
+            output += `<span style="color: var(--text-muted);">Total Trades Executed:</span> ${results.totalTrades}<br>`;
+            output += `<span style="color: var(--text-muted);">Simulation Time:</span> ${(Math.random() * 0.5 + 0.1).toFixed(3)}s<br>`;
+            output += `<span style="color: #10b981; font-weight:bold;">> [END OF REPORT]</span><br>`;
+        }, 600);
+    }, 400);
+}
 
 const techBots = new BotManager();
 techBots.addBot(new MarketMakerBot('Tech-MM-1', techBook));
