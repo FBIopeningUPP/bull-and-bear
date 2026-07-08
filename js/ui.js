@@ -86,7 +86,7 @@ export class UIController {
         const display = document.getElementById('order-book-display');
 
         let html = '<div class="order-book-header">';
-        html += `<div style="type-align:center; padding-bottom:10px; border-bottom: 1px solid #333; margin-bottom: 10px;">`;s
+        html += `<div style="type-align:center; padding-bottom:10px; border-bottom: 1px solid #333; margin-bottom: 10px;">`;
         html += `<strong>${orderBook.assetName} Order Book</strong></div>`;
         html += '<div style="display: flex; justify-content: space-between; color:#94a3b8; font-size:0.8rem; padding-bottom:5px;">';
         html += '<span>Price</span><span>Qty</span></div>';
@@ -104,7 +104,7 @@ export class UIController {
         html += '</div>';
 
         html += `<div style="text-align:center; padding:5px 0; border-top:1px solid #333; border-bottom:1px solid #333; color:#f8fafc; font-weight:bold; margin-bottom:10px; font-size:1.1rem;">`;
-        hmtl += `$${currentPrice.toFixed(2)}`;
+        html += `$${currentPrice.toFixed(2)}`;
         html += `</div>`;
 
         html += '<div class="bids-container" style="display:flex; flex-direction:columns;">';
@@ -116,7 +116,7 @@ export class UIController {
             html += `</div>`;
         }
 
-        hmtl += '</div>';
+        html += '</div>';
 
         display.innerHTML = html;
     }
