@@ -1,3 +1,5 @@
+import { TechnicalIndicators } from './indicators.js';
+
 export class CandlestickChart {
     constructor(canvasId) {
         this.canvas = document.getElementById(canvasId);
@@ -17,6 +19,10 @@ export class CandlestickChart {
 
         this.upColor = '#10b981';
         this.downColor = '#ef4444';
+
+        this.showSMA = true;
+        this.smaPeriod = 20;
+        this.smaColor = '#facc15';
     }
 
     updateData(candles, currentCandle) {
@@ -59,16 +65,16 @@ export class CandlestickChart {
         maxPrice += padding;
 
         let priceRange = maxPrice - minPrice;
-
         if (priceRange === 0) priceRange = 1; 
+
+        const getPos = (price) => {
+            return this.height - ((price - minPirce) / priceRange) * this.height;
+        };
 
         let x = this.width - (this.candleWidth + this.spacing);
 
         for (let i = visibleCandles.length - 1; i >= 0; i--) {
             const c = visibleCandles[i];
-            const getPos = (price) => {
-                return this.height - ((price - minPrice) / priceRange) * this.height;
-            };
 
             const yOpen = getPos(c.open);
             const yClose = getPos(c.close);
@@ -92,5 +98,36 @@ export class CandlestickChart {
 
             x -= (this.candleWidth + this.spacing);
         }
-    }
+
+        if (this.showSMA && this.candles.length >= this.smaPeriod) {
+            const closes = this.candles.map(c => c.close);
+            const fullSMA = TechnicalIndicators.calculateSMA(closes, this.smaPeriod);
+            const visibleSMA = fullSMA.slice(-maxVisible);
+
+            let smaX = this.width - (this.candleWidth + this.spacing) + (this.candleWidth / 2);
+            this.ctx.beginPath();
+            let firstPointDrawn = false;
+
+            for (let i = visibleSMA.length - 1; i >= 0; i--) {
+                const val = visibleSMA[i];
+
+                if (val !== null) {
+                    const y = getPos(val);
+
+                    if (!firstPointDrawn) {
+                        this.ctx.moveTo(smaX, y);
+                        firstPointDrawn = true;
+                    } else {
+                        this.ctx.lineTo(smaX, y);
+                    }
+                }
+
+                smaX -= (this.candleWidth + this.spacing);
+            }
+
+            this.ctx.strokeStyle = this.smaColor;
+            this.ctx.lineWidth = 2;
+            this.ctx.stroke();
+        } 
+    } 
 }
