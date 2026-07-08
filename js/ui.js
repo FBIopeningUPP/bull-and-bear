@@ -5,6 +5,13 @@ export class UIController {
         this.btnSpeed1 = document.getElementById('btn-speed-1');
         this.btnSpeed5 = document.getElementById('btn-speed-5');
 
+        this.btnBuy = document.getElementById('btn-buy');
+        this.btnSell = document.getElementById('btn-sell');
+        this.inputType = document.getElementById('order-type');
+        this.inputQty = document.getElementById('order-qty');
+        this.inputPrice = document.getElementById('order-price');
+
+        this.onOrderSubmit = null;
         this.onTabChange = null;
         this.onSpeedChange = null;
         this.onPauseToggle = null;
@@ -46,6 +53,18 @@ export class UIController {
                 this.btnPause.innerText = 'Pause';
                 this.btnPause.classList.remove('active');
             }
+
+            this.btnBuy.addEventListener('click', () => {
+                if (this.onOrderSubmit) {
+                    this.onOrderSubmit(this.inputType.value, 'buy', this.inputQty.value, this.inputPrice.value);
+                }
+            });
+
+            this.btnSell.addEventListener('click', () => {
+                if (this.onOrderSubmit) {
+                    this.onOrderSubmit(this.inputType.value, 'sell', this.inputQty.value, this.inputPrice.value);
+                }
+            });
 
             if (this.onPauseToggle) this.onPauseToggle();
         });
