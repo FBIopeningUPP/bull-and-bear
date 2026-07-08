@@ -19,6 +19,7 @@ export class UIController {
         this.onPauseToggle = null;
 
         this.bindEvents();
+        
     }
 
     bindEvents() {
@@ -79,5 +80,44 @@ export class UIController {
                 this.onOrderSubmit(this.inputType.value, 'sell', this.inputQty.value, this.inputPrice.value);
             }
         });
+    }
+
+    renderOrderBook(orderBook, currentPrice) {
+        const display = document.getElementById('order-book-display');
+
+        let html = '<div class="order-book-header">';
+        html += `<div style="type-align:center; padding-bottom:10px; border-bottom: 1px solid #333; margin-bottom: 10px;">`;s
+        html += `<strong>${orderBook.assetName} Order Book</strong></div>`;
+        html += '<div style="display: flex; justify-content: space-between; color:#94a3b8; font-size:0.8rem; padding-bottom:5px;">';
+        html += '<span>Price</span><span>Qty</span></div>';
+        html += '</div>'
+
+        html += '<div class="asks-container" style="display: flex; flex-direction: column-reverse; margin-bottom: 10px;">';
+
+        const topAsks = orderBook.asks.slice(0, 12);
+        for (let ask of topAsks) {
+            html += `<div style="display:flex; justify-content:space-between; color:#ef4444; padding:2px 0;">`;
+            html += `<span>$${ask.price.toFixed(2)}</span>`;
+            html += `<span>${ask.qty}</span>`;
+            html += `</div>`;
+        }
+        html += '</div>';
+
+        html += `<div style="text-align:center; padding:5px 0; border-top:1px solid #333; border-bottom:1px solid #333; color:#f8fafc; font-weight:bold; margin-bottom:10px; font-size:1.1rem;">`;
+        hmtl += `$${currentPrice.toFixed(2)}`;
+        html += `</div>`;
+
+        html += '<div class="bids-container" style="display:flex; flex-direction:columns;">';
+        const topBids = orderBook.bids.slice(0, 12);
+        for (let bid of topBids) {
+            html += `<div style="display:flex; justify-content:space-between; color:#22c55e; padding:2px 0;">`;
+            html += `<span>$${bid.price.toFixed(2)}</span>`;
+            html += `<span>${bid.qty}</span>`;
+            html += `</div>`;
+        }
+
+        hmtl += '</div>';
+
+        display.innerHTML = html;
     }
 }

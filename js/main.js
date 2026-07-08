@@ -142,6 +142,9 @@ function gameLoop() {
 
     equityHistory.push({ time: gameTime, equity: metrics.equity });
     eqChart.updateData(equityHistory);
+
+    const activePrice = activeFeed === techFeed ? techPrice : (activeFeed === goldFeed ? goldPrice : cryptoPrice);
+    ui.renderOrderBook(activeBook, activePrice);
 }
 
 function startEngine() {
