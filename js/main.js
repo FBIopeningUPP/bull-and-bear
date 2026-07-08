@@ -7,6 +7,7 @@ import { EquityChart } from './equityChart.js';
 import { MarketMakerBot, WhaleBot, BotManager } from './bots.js';
 import { NewsEngine } from './event.js';
 import { NotificationSystem } from './notifications.js';
+import { WindowManager } from './windowManager.js';
 
 const techFeed = new PriceFeed({
     name: 'TECH',
@@ -42,6 +43,50 @@ const feedsMap = {
 const newsEngine = new NewsEngine(feedsMap);
 
 const notificationSystem = new NotificationSystem();
+
+const winManager = new WindowManager('desktop');
+
+const orderEntryHTML = `
+    <div class="form-group" style="padding-top: 10px;">
+        <label>Type:</label>
+        <select id="order-type">
+            <option value="market">Market</option>
+            <option value="limit">Limit</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label>Quantity:</label>
+        <input type="number" id="order-qty" step="0.01">
+    </div>
+    <div style="display: flex; gap: 10px; margin-top: 25px;">
+        <button id="btn-buy" class="btn buy" style="flex:1; padding: 12px;">BUY</button>
+        <button id="btn-sell" class="btn sell" style="flex:1; padding: 12px;">SELL</button>
+    </div>
+`;
+winManager.createWindow('win-order-entry', 'Order Entry', orderEntryHTML, 50, 50, 320, 260);
+
+const orderBookHTML = `
+    <div id="order-book-display" style="font-family: monospace; font-size: 0.9rem;">
+        <p style="color: var(--text-muted);">Awaiting exchange connection...</p>
+    </div>
+`;
+winManager.createWindow('win-order-book', 'L2 Order Book', orderBookHTML, 390, 50, 320, 380);
+
+const ledgerHTML = `
+    <table class="ledger-table" style="margin-top: 0;">
+        <thead>
+            <tr>
+                <th>Time</th>
+                <th>Asset</th>
+                <th>Side</th>
+                <th>Qty</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody id="ledger-body"></tbody>
+    </table>
+`;
+winManager.createWindow('win-trade-ledger', 'Trade Ledger', ledgerHTML, 50, 330, 660, 250); 
 
 const techBots = new BotManager();
 techBots.addBot(new MarketMakerBot('Tech-MM-1', techBook));

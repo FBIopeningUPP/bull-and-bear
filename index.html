@@ -26,7 +26,7 @@
             <div class="tab" data-asset="PORTFOLIO">Portfolio & Equity Curve</div>
         </nav>
 
-        <main class="workspace">
+        <main class="workspace" id="desktop" style="position: relative; overflow: hidden; display: block;">
 
             <section class="chart-section">
                 <div id="chart-view" class="canvas-container">
@@ -35,52 +35,6 @@
 
                 <div id="portfolio-view" class="canvas-container hidden">
                     <canvas id="equity-chart"></canvas>
-                </div>
-            </section>
-
-            <section id="trading-sidebar" class="trading-section glass-panel">
-                <div class="panel">
-                    <h2>Place Order</h2>
-                    <div class="form-group">
-                        <label>Type:</label>
-                        <select id="order-type">
-                            <option value="market">Market</option>
-                            <option value="limit">Limit</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Quantity:</label>
-                        <input type="number" id="order-qty" value="10" min="1">
-                    </div>
-                    <div class="form-group">
-                        <label>Limit Price:</label>
-                        <input type="number" id="order-price" step="0.01">
-                    </div>
-                    <div style="display: flex; gap: 10px; margin-top: 15px;">
-                        <button id="btn-buy" class="btn buy" style="flex:1">BUY</button>
-                        <button id="btn-sell" class="btn sell" style="flex:1">SELL</button>
-                    </div>
-                </div>
-                <div class="panel" style="flex: 1;">
-                    <h2>Order Book</h2>
-                    <div id="order-book-display" style="font-family: monospace; font-size: 0.9rem;">
-                        <p style="color: var(--text-muted);">Waiting for market data...</p>
-                    </div>
-                </div>
-                <div class="panel" style="flex: 1; overflow-y: auto; max-height: 250px;">
-                    <h2>Trade Ledger</h2>
-                    <table class="ledger-table">
-                        <thead>
-                            <th>Time</th>
-                            <th>Asset</th>
-                            <th>Side</th>
-                            <th>Qty</th>
-                            <th>Price</th>
-                        </thead>
-                        <tbody id="ledger-body">
-                            
-                        </tbody>
-                    </table>
                 </div>
             </section>
         </main>
