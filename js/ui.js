@@ -10,6 +10,8 @@ export class UIController {
         this.inputType = document.getElementById('order-type');
         this.inputQty = document.getElementById('order-qty');
         this.inputPrice = document.getElementById('order-price');
+        this.chartView = document.getElementById('chart-view');
+        this.portfolioView = document.getElementById('portfolio-view');
 
         this.onOrderSubmit = null;
         this.onTabChange = null;
@@ -28,6 +30,14 @@ export class UIController {
                 clickedTab.classList.add('active');
 
                 const assetName = clickedTab.getAttribute('data-asset');
+
+                if (assetName === 'PORTFOLIO') {
+                    this.chartView.classList.add('hidden');
+                    this.portfolioView.classList.remove('hidden');
+                } else {
+                    this.chartView.classList.remove('hidden');
+                    this.portfolioView.classList.add('hidden');
+                }
 
                 if (this.onTabChange) this.onTabChange(assetName);
             });
@@ -60,13 +70,13 @@ export class UIController {
         });
         this.btnBuy.addEventListener('click', () => {
             if (this.onOrderSubmit) {
-                this.onOrderSubmit(this.inputType.ariaValueMax, 'buy', this.inputQty.value, this.inputPrice.value);
+                this.onOrderSubmit(this.inputType.value, 'buy', this.inputQty.value, this.inputPrice.value);
             }
         });
 
         this.btnSell.addEventListener('click', () => {
             if (this.onOrderSubmit) {
-                this.onOrderSubmit(this.inputType.ariaValueMax, 'sell', this.inputQty.value, this.inputPrice.value);
+                this.onOrderSubmit(this.inputType.value, 'sell', this.inputQty.value, this.inputPrice.value);
             }
         });
     }

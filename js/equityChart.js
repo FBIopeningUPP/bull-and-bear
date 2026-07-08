@@ -1,5 +1,5 @@
 export class EquityChart {
-    constructor() {
+    constructor(canvasId) {
         this.canvas = document.getElementById(canvasId);
         this.ctx = this.canvas.getContext('2d');
 
@@ -24,8 +24,8 @@ export class EquityChart {
         if (this.width !== currentWidth || this.height !== currentHeight) {
             this.width = currentWidth;
             this.height = currentHeight;
-            this.canvas.width = this.width;
-            this.canvas.height = this.height;
+            this.canvas.width = this.width * 2;
+            this.canvas.height = this.height * 2;
             this.ctx.scale(2, 2);
         }
 
@@ -37,8 +37,8 @@ export class EquityChart {
         const maxPoints = Math.floor(this.width / pointSpacing);
         const visibleData = this.history.slice(-maxPoints);
 
-        let minEq = infinity;
-        let maxEq = -infinity;
+        let minEq = Infinity;
+        let maxEq = -Infinity;
 
         for (let pt of visibleData) {
             if (pt.equity < minEq) minEq = pt.equity;
