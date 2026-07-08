@@ -6,6 +6,7 @@ import { Portfolio } from './portfolio.js';
 import { EquityChart } from './equityChart.js';
 import { MarketMakerBot, WhaleBot, BotManager } from './bots.js';
 import { NewsEngine } from './event.js';
+import { NotificationSystem } from './notifications.js';
 
 const techFeed = new PriceFeed({
     name: 'TECH',
@@ -40,6 +41,8 @@ const feedsMap = {
 };
 const newsEngine = new NewsEngine(feedsMap);
 
+const notificationSystem = new NotificationSystem();
+
 const techBots = new BotManager();
 techBots.addBot(new MarketMakerBot('Tech-MM-1', techBook));
 techBots.addBot(new MarketMakerBot('Tech-MM-2', techBook));
@@ -57,8 +60,17 @@ cryptoBots.addBot(new WhaleBot('Crypto-Whale-1', cryptoBook));
 cryptoBots.addBot(new WhaleBot('Crypto-Whale-2', cryptoBook));
 
 const logTrade = (trade, asset) => {
-    console.log(`TRADE FILLED! ${asset} ${trade.side.toUpperCase()} ${trade.qty} shares @ $${trade.executePrice.toFixed(2)}`);
-    myPortfolio.addTrade(asset, trade.side, trade.qty, trade.executePrice);
+
+    if(trade.isUser) {
+        myPortfolio.addTrade(asset, trade.size, trade.qty, trade.executePrice);
+
+        const type = trade.side === 'buy' ? 'success' : 'warnign';
+        notificationSystem.show(
+            'Trade Executed',
+            `${trade.side.toUpperCase()} ${trade.qty} ${asset} @ $${trade.executePrice.toFixed(2)}`,
+            type
+        );
+    }
 };
 
 techBook.onTrade = logTrade;
@@ -107,20 +119,25 @@ ui.onSpeedChange = (newSpeedMs) => {
 
 ui.onOrderSubmit = (type, side, qty, price) => {
     const order = activeBook.placeOrder(type, side, qty, price);
+    order.isUser = true;
+
     if (type === 'market') {
         pendingMarketOrder = order;
     } else {
-        console.log(`Limit ${side} placed at $${price} and added to Order Book.`);
+        notificationSystem.show('Limit Order Placed', `${side.toUpperCase()} ${qty} shares at $${price}`, 'info');
     }
 };
 
 function gameLoop() {
     gameTime += 1;
 
-    const headline = newsEngine.tick(gameTime);
+    const headline = newsEngine.tick();
     if (headline) {
         document.getElementById('news-text').innerText = headline;
-        const ticker = document.querySelector('.news-text-wrapper');
+
+        notificationSystem.show('BREAKING NEWS', headline, 'error', 6000);
+
+        const ticker = document.querySelector('.news-ticker-container');
         ticker.style.backgroundColor = '#fbbf24';
         setTimeout(() => {
             ticker.style.backgroundColor = '#ef4444';
