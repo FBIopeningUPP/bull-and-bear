@@ -60,15 +60,39 @@ export class CandlestickChart {
             if (c.high > maxPrice) maxPrice = c.high;
         }
 
-        const padding = (maxPrice - minPrice) * 0.1;
+        let visibleSMA = [];
+        if (this.showSMA && this.candles.length >= this.smaPeriod) {
+            const closes = this.candles.map(c => c.close);
+            const fullSMA = TechnicalIndicators.calculateSMA(closes, this.smaPeriod);
+            visibleSMA = fullSMA.slice(-maxVisible);
+
+            for (let val of visibleSMA) {
+                if (val !== null) {
+                    if (val < minPrice) minPrice = val;
+                    if (val > maxPrice) maxPrice = val;
+                }
+            }
+        }
+
+
+        let priceDiff = maxPrice - minPrice;
+
+        if (priceDiff < 2) {
+            priceDiff = 2;
+            const centerPrice = (maxPrice + minPrice) / 2;
+            minPrice = centerPrice - 1;
+            maxPrice = centerPrice + 1;
+        }
+
+        const padding = priceDiff * 0.1;
         minPrice -= padding;
         maxPrice += padding;
 
         let priceRange = maxPrice - minPrice;
-        if (priceRange === 0) priceRange = 1; 
+        if (priceRange === 0) priceRange = 1;
 
         const getPos = (price) => {
-            return this.height - ((price - minPirce) / priceRange) * this.height;
+            return this.height - ((price - minPrice) / priceRange) * this.height;
         };
 
         let x = this.width - (this.candleWidth + this.spacing);
@@ -100,9 +124,6 @@ export class CandlestickChart {
         }
 
         if (this.showSMA && this.candles.length >= this.smaPeriod) {
-            const closes = this.candles.map(c => c.close);
-            const fullSMA = TechnicalIndicators.calculateSMA(closes, this.smaPeriod);
-            const visibleSMA = fullSMA.slice(-maxVisible);
 
             let smaX = this.width - (this.candleWidth + this.spacing) + (this.candleWidth / 2);
             this.ctx.beginPath();
