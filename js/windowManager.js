@@ -100,7 +100,7 @@ export class WindowManager {
         const resizeS = win.querySelector('.resize-handle.s');
 
         win.addEventListener('mousedown', () => {
-            this.setActiveWindow(win);
+            this.bringToFront(win);
         });
 
         header.addEventListener('mousedown', (e) => {
@@ -163,7 +163,7 @@ export class WindowManager {
                 win.style.left = '0px';
                 win.style.top = '60px';
                 win.style.width = '100vw';
-                win.style.height = 'clac(100vh - 120px)';
+                win.style.height = 'calc(100vh - 120px)';
             }
         });
     }

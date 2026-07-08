@@ -5,14 +5,12 @@ export class UIController {
         this.btnSpeed1 = document.getElementById('btn-speed-1');
         this.btnSpeed5 = document.getElementById('btn-speed-5');
 
-        this.btnBuy = document.getElementById('btn-buy');
-        this.btnSell = document.getElementById('btn-sell');
-        this.inputType = document.getElementById('order-type');
-        this.inputQty = document.getElementById('order-qty');
-        this.inputPrice = document.getElementById('order-price');
+        this.toggleOrder = document.getElementById('toggle-order');
+        this.toggleBook = document.getElementById('toggle-book');
+        this.toggleLedger = document.getElementById('toggle-ledger');
+
         this.chartView = document.getElementById('chart-view');
         this.portfolioView = document.getElementById('portfolio-view');
-        this.ledgerBody = document.getElementById('ledger-body');
 
         this.onOrderSubmit = null;
         this.onTabChange = null;
@@ -20,69 +18,82 @@ export class UIController {
         this.onPauseToggle = null;
 
         this.bindEvents();
-        
     }
 
     bindEvents() {
-        this.tabs.forEach(tab => {
-            tab.addEventListener('click', (e) => {
-                this.tabs.forEach(t => t.classList.remove('active'));
+        document.addEventListener('click', (e) => {
+            if (e.target && e.target.id === 'btn-buy') {
+                const type = document.getElementById('order-type').value;
+                const qty = document.getElementById('order-qty').value;
+                const price = document.getElementById('order-price').value;
+                if (this.onOrderSubmit) this.onOrderSubmit(type, 'buy', qty, price);
+            }
 
-                const clickedTab = e.currentTarget;
-                clickedTab.classList.add('active');
-
-                const assetName = clickedTab.getAttribute('data-asset');
-
-                if (assetName === 'PORTFOLIO') {
-                    this.chartView.classList.add('hidden');
-                    this.portfolioView.classList.remove('hidden');
-                } else {
-                    this.chartView.classList.remove('hidden');
-                    this.portfolioView.classList.add('hidden');
-                }
-
-                if (this.onTabChange) this.onTabChange(assetName);
-            });
+            if (e.target && e.target.id === 'btn-sell') {
+                const type = document.getElementById('order-type').value;
+                const qty = document.getElementById('order-qty').value;
+                const price = document.getElementById('order-price').value;
+                if (this.onOrderSubmit) this.onOrderSubmit(type, 'sell', qty, price);
+            }
         });
 
-        this.btnSpeed1.addEventListener('click', () => {
-            this.btnSpeed1.classList.add('active');
-            this.btnSpeed5.classList.remove('active');
-            if (this.onSpeedChange) this.onSpeedChange(500);
-        });
-
-        this.btnSpeed5.addEventListener('click', () => {
-            this.btnSpeed5.classList.add('active');
-            this.btnSpeed1.classList.remove('active');
-            if (this.onSpeedChange) this.onSpeedChange(100);
-        });
-
-        this.btnPause.addEventListener('click', () => {
-            if (this.btnPause.innerText === 'Pause') {
-                this.btnPause.innerText = 'Play';
-                this.btnPause.classList.add('active');
+        const toggleWindow = (windowId) => {
+            const win = document.getElementById(windowId);
+            if (win) {
+                if (win.style.display === 'none') {
+                    win.style.display = 'flex';
+                    win.style.zIndex = 9999;
             } else {
-                this.btnPause.innerText = 'Pause';
-                this.btnPause.classList.remove('active');
+                win.style.display = 'none';
             }
+        }
+    };
 
+    this.toggleOrder.addEventListener('click', () => toggleWindow('win-order-entry'));
+    this.toggleBook.addEventListener('click', () => toggleWindow('win-order-book'));
+    this.toggleLedger.addEventListener('click', () => toggleWindow('win-trade-ledger'));
+
+    this.tabs.forEach(tab => {
+        tab.addEventListener('click', (e) => {
+            this.tabs.forEach(t => t.classList.remove('active'));
+            const clickedTab = e.currentTarget;
+            clickedTab.classList.add('active');
             
-
-            if (this.onPauseToggle) this.onPauseToggle();
-        });
-        this.btnBuy.addEventListener('click', () => {
-            if (this.onOrderSubmit) {
-                this.onOrderSubmit(this.inputType.value, 'buy', this.inputQty.value, this.inputPrice.value);
+            const assetName = clickedTab.getAttribute('data-asset');
+            if (assetName === 'PORTFOLIO') {
+                this.chartView.classList.add('hidden');
+                this.portfolioView.classList.remove('hidden');
+            } else {
+                this.chartView.classList.remove('hidden');
+                this.portfolioView.classList.add('hidden');
             }
+            if (this.onTabChange) this.onTabChange(assetName);
         });
+    })
 
-        this.btnSell.addEventListener('click', () => {
-            if (this.onOrderSubmit) {
-                this.onOrderSubmit(this.inputType.value, 'sell', this.inputQty.value, this.inputPrice.value);
-            }
-        });
-    }
+    this.btnSpeed1.addEventListener('click', () => {
+        this.btnSpeed1.classList.add('active');
+        this.btnSpeed5.classList.remove('active');
+        if (this.onSpeedChange) this.onSpeedChange(500);
+    });
 
+    this.btnSpeed5.addEventListener('click', () => {
+        this.btnSpeed5.classList.add('active');
+        this.btnSpeed1.classList.remove('active');
+        if (this.onSpeedChange) this.onSpeedChange(100);
+    });
+
+    this.btnPause.addEventListener('click', () => {
+        if (this.btnPause.innerText === 'Pause') {
+            this.btnPause.innerText = 'Play';
+            this.btnPause.classList.add('active');
+        } else {
+            this.btnPause.innerText = 'Pause';
+            this.btnPause.classList.remove('active');
+        }
+        if (this.onPauseToggle) this.onPauseToggle();
+    }); 
+}
     renderOrderBook(orderBook, currentPrice) {
         const display = document.getElementById('order-book-display');
 
@@ -123,12 +134,11 @@ export class UIController {
     }
 
     addLedgerEntry(trade, asset) {
-        if (!this.ledgerBody) return;
+        const ledgerBody = document.getElementById('ledger-body');
+        if (!ledgerBody) return;
 
         const row = document.createElement('tr');
-
         const colorClass = trade.side === 'buy' ? 'ledger-row-buy' : 'ledger-row-sell';
-
         const timeStr = new Date(trade.executeTime).toLocaleTimeString();
 
         row.innerHTML = `
@@ -139,10 +149,10 @@ export class UIController {
             <td>$${trade.executePrice.toFixed(2)}</td>
         `;
 
-        this.ledgerBody.prepend(row);
+        ledgerBody.prepend(row);
 
-        if (this.ledgerBody.childElementCount > 50) {
-            this.ledgerBody.removeChild(this.ledgerBody.lastChild);
+        if (ledgerBody.childElementCount > 50) {
+            ledgerBody.removeChild(ledgerBody.lastChild);
         }
     }
 }
