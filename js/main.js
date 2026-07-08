@@ -4,8 +4,8 @@ import { CandlestickChart } from './candlestick.js';
 const techFeed = new PriceFeed({
     name: 'TECH',
     initialPrice: 150,
-    mu: 0.002,
-    sigma: 0.001
+    mu: 0.0002,
+    sigma: 0.003
 });
 
 const goldFeed = new PriceFeed({
