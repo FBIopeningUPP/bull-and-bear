@@ -28,7 +28,7 @@ const techBook = new OrderBook('TECH');
 const goldBook = new OrderBook('GOLD');
 const cryptoBook = new OrderBook('CRYPTO');
 
-const logTrade = (assetName, order) => {
+const logTrade = (trade, asset) => {
     console.log(`TRADE FILLED! ${asset} ${trade.side.toUpperCase()} ${trade.qty} shares @ $${trade.executePrice.toFixed(2)}`);
 };
 
@@ -44,7 +44,10 @@ let speedMs = 500;
 const chart = new CandlestickChart('main-chart');
 
 const ui = new UIController();
+
 let activeFeed = techFeed;
+let activeBook = techBook;
+let pendingMarketOrder = null;
 let isPaused = false;
 
 ui.onTabChange = (assetName) => {
