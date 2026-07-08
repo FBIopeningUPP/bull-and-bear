@@ -61,12 +61,27 @@
                         <button id="btn-sell" class="btn sell" style="flex:1">SELL</button>
                     </div>
                 </div>
-                    <div class="panel" style="flex: 1;">
-                        <h2>Order Book</h2>
-                        <div id="order-book-display" style="font-family: monospace; font-size: 0.9rem;">
-                            <p style="color: var(--text-muted);">Waiting for market data...</p>
-                        </div>
+                <div class="panel" style="flex: 1;">
+                    <h2>Order Book</h2>
+                    <div id="order-book-display" style="font-family: monospace; font-size: 0.9rem;">
+                        <p style="color: var(--text-muted);">Waiting for market data...</p>
                     </div>
+                </div>
+                <div class="panel" style="flex: 1; overflow-y: auto; max-height: 250px;">
+                    <h2>Trade Ledger</h2>
+                    <table class="ledger-table">
+                        <thead>
+                            <th>Time</th>
+                            <th>Asset</th>
+                            <th>Side</th>
+                            <th>Qty</th>
+                            <th>Price</th>
+                        </thead>
+                        <tbody id="ledger-body">
+                            
+                        </tbody>
+                    </table>
+                </div>
             </section>
         </main>
         <div class="news-ticker-container">

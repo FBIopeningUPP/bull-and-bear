@@ -1,4 +1,4 @@
-export class NotificationsSystem {
+export class NotificationSystem {
     constructor() {
         this.container = document.getElementById('toast-container');
     }
@@ -21,9 +21,13 @@ export class NotificationsSystem {
         toast.classList.add('show');
 
         setTimeout(() => {
-            if (this.container.contains(toast)) {
-                this.container.removeChild(toast);
-            }
-        }, 400);
+            toast.classList.remove('show');
+
+            setTimeout(() => {
+                if (this.container.contains(toast)) {
+                    this.container.removeChild(toast);
+                }
+            }, 400);
+        }, duration);
     }
 }

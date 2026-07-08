@@ -33,7 +33,7 @@ export class CandlestickChart {
         this.draw();
     }
 
-    draw() {
+    draw () {
         const currentWidth = this.canvas.parentElement.clientWidth;
         const currentHeight = this.canvas.parentElement.clientHeight;
 
@@ -45,19 +45,19 @@ export class CandlestickChart {
             this.ctx.scale(2, 2);
         }
 
-        this.ctx.clearRect(0, 0, this.width, this.height);
+        this.ctx.clearRect(-10, -10, this.width + 20, this.height + 20);
 
-        if (this.candles.length === 0) return;
+        if (!this.candles || this.candles.length === 0) return;
 
-        const maxVisible = Math.floor(this.width / (this.candleWidth + this.spacing));
+        const maxVisible = Math.max(1, Math.floor(this.width / (this.candleWdith + this.spacing)));
         const visibleCandles = this.candles.slice(-maxVisible);
 
         let minPrice = Infinity;
         let maxPrice = -Infinity;
 
         for (let c of visibleCandles) {
-            if (c.low < minPrice) minPrice = c.low;
-            if (c.high > maxPrice) maxPrice = c.high;
+            if (typeof c.low === 'number' && !isNaN(c.low) && c.low < minPrice) minPrice = c.low;
+            if (typeof c.high === 'number' && !isNaN(c.high) && c.high > maxPrice) maxPrice = c.high;
         }
 
         let visibleSMA = [];
@@ -67,45 +67,49 @@ export class CandlestickChart {
             visibleSMA = fullSMA.slice(-maxVisible);
 
             for (let val of visibleSMA) {
-                if (val !== null) {
+                if (typeof val === 'number' && !isNaN(val)) {
                     if (val < minPrice) minPrice = val;
                     if (val > maxPrice) maxPrice = val;
                 }
             }
         }
 
+        if (minPrice === Infinity || maxPrice === -Infinity) return;
 
         let priceDiff = maxPrice - minPrice;
-
-        if (priceDiff < 2) {
+        if (priceDiff < 2 || isNaN(priceDiff)) {
             priceDiff = 2;
-            const centerPrice = (maxPrice + minPrice) / 2;
-            minPrice = centerPrice - 1;
-            maxPrice = centerPrice + 1;
+            const center = (maxPrice + minPrice) / 2 || 100;
+            minPrice = center - 1;
+            maxPrice = center + 1;
         }
-
-        const padding = priceDiff * 0.1;
+        
+        const padding = priceDiff * 0.15;
         minPrice -= padding;
         maxPrice += padding;
 
         let priceRange = maxPrice - minPrice;
-        if (priceRange === 0) priceRange = 1;
+        if (priceRange <= 0) priceRange = 1;
 
         const getPos = (price) => {
-            return this.height - ((price - minPrice) / priceRange) * this.height;
+            if (typeof price !== 'number' || isNaN(price)) return this.height;
+            let y = this.height - ((price - minPrice) / priceRange) * this.height;
+            if (y < 0) y = 0;
+            if (y > this.height) y = this.height;
+            return y;
         };
 
         let x = this.width - (this.candleWidth + this.spacing);
 
         for (let i = visibleCandles.length - 1; i >= 0; i--) {
             const c = visibleCandles[i];
-
             const yOpen = getPos(c.open);
             const yClose = getPos(c.close);
             const yHigh = getPos(c.high);
             const yLow = getPos(c.low);
 
             const isUp = c.close >= c.open;
+
             this.ctx.fillStyle = isUp ? this.upColor : this.downColor;
             this.ctx.strokeStyle = isUp ? this.upColor : this.downColor;
 
@@ -123,16 +127,15 @@ export class CandlestickChart {
             x -= (this.candleWidth + this.spacing);
         }
 
-        if (this.showSMA && this.candles.length >= this.smaPeriod) {
-
-            let smaX = this.width - (this.candleWidth + this.spacing) + (this.candleWidth / 2);
-            this.ctx.beginPath();
+        if (this.showSMA && visibleSMA.length > 0) {
+            let smaX = this.width - (this.candleWidth + this.spacing) + this.candleWidth / 2;
+            this.ctx.beginPath
             let firstPointDrawn = false;
 
             for (let i = visibleSMA.length - 1; i >= 0; i--) {
                 const val = visibleSMA[i];
 
-                if (val !== null) {
+                if (typeof val === 'number' && !isNaN(val)) {
                     const y = getPos(val);
 
                     if (!firstPointDrawn) {
@@ -142,13 +145,12 @@ export class CandlestickChart {
                         this.ctx.lineTo(smaX, y);
                     }
                 }
-
                 smaX -= (this.candleWidth + this.spacing);
             }
 
             this.ctx.strokeStyle = this.smaColor;
             this.ctx.lineWidth = 2;
             this.ctx.stroke();
-        } 
+        }
     } 
 }
