@@ -3,6 +3,7 @@ import { CandlestickChart } from './candlestick.js';
 import { UIController } from './ui.js';
 import { OrderBook } from './orderBook.js';
 import { Portfolio } from './portfolio.js';
+import { EquityChart } from './equityChart.js';
 
 const techFeed = new PriceFeed({
     name: 'TECH',
@@ -45,6 +46,8 @@ let loopInterval = null;
 let speedMs = 500;
 
 const chart = new CandlestickChart('main-chart');
+const eqChart = new EquityChart('equity-chart');
+const equityHistory = [];
 
 const ui = new UIController();
 
@@ -58,7 +61,9 @@ ui.onTabChange = (assetName) => {
     if (assetName === 'GOLD') { activeFeed = goldFeed; activeBook = goldBook; }
     if (assetName === 'CRYPTO') { activeFeed = cryptoFeed; activeBook = cryptoBook; }
 
-    chart.updateData(activeFeed.candles, activeFeed.currentCandle);
+    if (assetName === 'PORTFOLIO') {
+        chart.updateData(activeFeed.candles, activeFeed.currentCandle);
+    }
 };
 
 ui.onPauseToggle = () => {
@@ -114,6 +119,9 @@ function gameLoop() {
     document.getElementById('stat-day').innerText = `Day ${gameTime}`;
 
     document.getElementById('stat-unrealized').style.color = metrics.unrealizedPnL >= 0 ? '#10b981' : '#ef4444';
+
+    equityHistory.push({ time: gameTime, equity: metrics.equity });
+    eqChart.updateData(equityHistory);
 }
 
 function startEngine() {
