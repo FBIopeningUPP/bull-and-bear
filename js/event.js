@@ -1,6 +1,6 @@
 // fake news that makes the market go shit pans //
 export class NewsEngine {
-    constructor() {
+    constructor(feeds) {
         this.feeds = feeds;
 
         this.newsDatabase = [

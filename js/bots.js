@@ -80,10 +80,10 @@ export class BotManager {
             bot.act(currentPrice);
 
             if (bot.orderBook.bids.length > 30) {
-                bot.orderBook.bids = 30;
+                bot.orderBook.bids.length = 30;
             }
             if (bot.orderBook.asks.length > 30) {
-                bot.orderBook.asks = 30;
+                bot.orderBook.asks.length = 30;
             }
         }
     }
