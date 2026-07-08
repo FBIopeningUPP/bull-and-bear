@@ -34,7 +34,7 @@ export class orderBook {
         }
         return order;
     }
-
+    ///usage of ai was there in this block
     processTick(currentPrice, incomingMarketOrders = null){
         let fills = [];
 
@@ -45,5 +45,29 @@ export class orderBook {
                 executeTime: Date.now()
             });
         }
+
+        while (this.bids.length > 0 && currentPrice <= this.bids[0].price) {
+            const filledOrder = this.bids.shift();
+            fills.push({
+                ...filledOrder,
+                executePrice: currentPrice,
+                executeTime: Date.now()
+            });
+        }
+
+        while (this.asks.length > 0 && currentPrice >= this.asks[0].price) {
+            const filledOrder = this.asks.shift();
+            fills.push({
+                ...filledOrder,
+                executePrice: currentPrice,
+                executeTime: Date.now()
+            });
+        }
+
+        for (let trade of fills) {
+            if (this.onTrade) this.onTrade(trade, this.assetName);
+        }
+
+        return fills;
     }
 }
