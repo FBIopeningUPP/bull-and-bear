@@ -77,7 +77,7 @@ ui.onTabChange = (assetName) => {
     if (assetName === 'GOLD') { activeFeed = goldFeed; activeBook = goldBook; }
     if (assetName === 'CRYPTO') { activeFeed = cryptoFeed; activeBook = cryptoBook; }
 
-    if (assetName === 'PORTFOLIO') {
+    if (assetName !== 'PORTFOLIO') {
         chart.updateData(activeFeed.candles, activeFeed.currentCandle);
     }
 };
