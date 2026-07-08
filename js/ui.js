@@ -12,6 +12,7 @@ export class UIController {
         this.inputPrice = document.getElementById('order-price');
         this.chartView = document.getElementById('chart-view');
         this.portfolioView = document.getElementById('portfolio-view');
+        this.ledgerBody = document.getElementById('ledger-body');
 
         this.onOrderSubmit = null;
         this.onTabChange = null;
@@ -119,5 +120,29 @@ export class UIController {
         html += '</div>';
 
         display.innerHTML = html;
+    }
+
+    addLedgerEntry(trade, asset) {
+        if (!this.ledgerBody) return;
+
+        const row = document.createElement('tr');
+
+        const colorClass = trade.side === 'buy' ? 'ledger-row-buy' : 'ledger-row-sell';
+
+        const timeStr = new Date(trade.executeTime).toLocaleTimeString();
+
+        row.innerHTML = `
+            <td>${timeStr}</td>
+            <td>${asset}</td>
+            <td class="${colorClass}">${trade.side.toUpperCase()}</td>
+            <td>${trade.qty}</td>
+            <td>$${trade.executePrice.toFixed(2)}</td>
+        `;
+
+        this.ledgerBody.prepend(row);
+
+        if (this.ledgerBody.childElementCount > 50) {
+            this.ledgerBody.removeChild(this.ledgerBody.lastChild);
+        }
     }
 }

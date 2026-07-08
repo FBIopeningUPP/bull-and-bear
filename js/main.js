@@ -60,7 +60,6 @@ cryptoBots.addBot(new WhaleBot('Crypto-Whale-1', cryptoBook));
 cryptoBots.addBot(new WhaleBot('Crypto-Whale-2', cryptoBook));
 
 const logTrade = (trade, asset) => {
-
     if(trade.isUser) {
         myPortfolio.addTrade(asset, trade.size, trade.qty, trade.executePrice);
 
@@ -70,6 +69,7 @@ const logTrade = (trade, asset) => {
             `${trade.side.toUpperCase()} ${trade.qty} ${asset} @ $${trade.executePrice.toFixed(2)}`,
             type
         );
+        ui.addLedgerEntry(trade, asset);
     }
 };
 
