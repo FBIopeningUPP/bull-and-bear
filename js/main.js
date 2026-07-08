@@ -5,6 +5,7 @@ import { OrderBook } from './orderBook.js';
 import { Portfolio } from './portfolio.js';
 import { EquityChart } from './equityChart.js';
 import { MarketMakerBot, WhaleBot, BotManager } from './bots.js';
+import { NewsEngine } from './event.js';
 
 const techFeed = new PriceFeed({
     name: 'TECH',
@@ -31,6 +32,13 @@ const techBook = new OrderBook('TECH');
 const goldBook = new OrderBook('GOLD');
 const cryptoBook = new OrderBook('CRYPTO');
 const myPortfolio = new Portfolio(10000.00);
+
+const feedsMap = {
+    'TECH': techFeed,
+    'GOLD': goldFeed,
+    'CRYPTO': cryptoFeed
+};
+const newsEngine = new NewsEngine(feedsMap);
 
 const techBots = new BotManager();
 techBots.addBot(new MarketMakerBot('Tech-MM-1', techBook));
@@ -108,6 +116,16 @@ ui.onOrderSubmit = (type, side, qty, price) => {
 
 function gameLoop() {
     gameTime += 1;
+
+    const headline = newsEngine.tick(gameTime);
+    if (headline) {
+        document.getElementById('news-text').innerText = headline;
+        const ticker = document.querySelector('.news-text-wrapper');
+        ticker.style.backgroundColor = '#fbbf24';
+        setTimeout(() => {
+            ticker.style.backgroundColor = '#ef4444';
+        }, 500);
+    }
 
     const techPrice = techFeed.tick(gameTime);
     const goldPrice = goldFeed.tick(gameTime);
