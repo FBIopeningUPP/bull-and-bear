@@ -31,6 +31,22 @@ const goldBook = new OrderBook('GOLD');
 const cryptoBook = new OrderBook('CRYPTO');
 const myPortfolio = new Portfolio(10000.00);
 
+const techBots = new BotManager();
+techBots.addBot(new MarketMakerBot('Tech-MM-1', techBook));
+techBots.addBot(new MarketMakerBot('Tech-MM-2', techBook));
+techBots.addBot(new WhaleBot('Tech-Whale', techBook));
+
+const goldBots = new BotManager();
+goldBots.addBot(new MarketMakerBot('Gold-MM-1', goldBook));
+goldBots.addBot(new WhaleBot('Gold-Whale', goldBook));
+
+const cryptoBots = new BotManager();
+cryptoBots.addBot(new MarketMakerBot('Crypto-MM-1', cryptoBook));
+cryptoBots.addBot(new MarketMakerBot('Crypto-MM-2', cryptoBook));
+cryptoBots.addBot(new MarketMakerBot('Crypto-MM-3', cryptoBook));
+cryptoBots.addBot(new WhaleBot('Crypto-Whale-1', cryptoBook));
+cryptoBots.addBot(new WhaleBot('Crypto-Whale-2', cryptoBook));
+
 const logTrade = (trade, asset) => {
     console.log(`TRADE FILLED! ${asset} ${trade.side.toUpperCase()} ${trade.qty} shares @ $${trade.executePrice.toFixed(2)}`);
     myPortfolio.addTrade(asset, trade.side, trade.qty, trade.executePrice);
@@ -95,6 +111,9 @@ function gameLoop() {
     const techPrice = techFeed.tick(gameTime);
     const goldPrice = goldFeed.tick(gameTime);
     const cryptoPrice = cryptoFeed.tick(gameTime);
+    techBots.tick(techPrice);
+    goldBots.tick(goldPrice);
+    cryptoBots.tick(cryptoPrice);
     techBook.processTick(techPrice, activeFeed === techFeed ? pendingMarketOrder : null);
     goldBook.processTick(goldPrice, activeFeed === goldFeed ? pendingMarketOrder : null);
     cryptoBook.processTick(cryptoPrice, activeFeed === cryptoFeed ? pendingMarketOrder : null);
