@@ -1,4 +1,5 @@
 import { PriceFeed } from './priceFeed.js';
+import { CandlestickChart } from './candlestick.js';
 
 const techFeed = new PriceFeed({
     name: 'TECH',
@@ -25,6 +26,8 @@ let gameTime = 0;
 let loopInterval = null;
 let speedMs = 500;
 
+const chart = new CandlestickChart('main-chart');
+
 function gameLoop() {
     gameTime += 1;
 
@@ -33,6 +36,8 @@ function gameLoop() {
     const cryptoPrice = cryptoFeed.tick(gameTime);
 
     console.log(`Time: ${gameTime} | TECH: ${techPrice.toFixed(2)} | GOLD: ${goldPrice.toFixed(2)} | CRYPTO: ${cryptoPrice.toFixed(2)}`);
+
+    chart.updateData(techFeed.candles, techFeed.currentCandle);
 }
 
 function startEngine() {
