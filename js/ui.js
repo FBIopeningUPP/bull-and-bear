@@ -54,19 +54,20 @@ export class UIController {
                 this.btnPause.classList.remove('active');
             }
 
-            this.btnBuy.addEventListener('click', () => {
-                if (this.onOrderSubmit) {
-                    this.onOrderSubmit(this.inputType.value, 'buy', this.inputQty.value, this.inputPrice.value);
-                }
-            });
-
-            this.btnSell.addEventListener('click', () => {
-                if (this.onOrderSubmit) {
-                    this.onOrderSubmit(this.inputType.value, 'sell', this.inputQty.value, this.inputPrice.value);
-                }
-            });
+            
 
             if (this.onPauseToggle) this.onPauseToggle();
+        });
+        this.btnBuy.addEventListener('click', () => {
+            if (this.onOrderSubmit) {
+                this.onOrderSubmit(this.inputType.ariaValueMax, 'buy', this.inputQty.value, this.inputPrice.value);
+            }
+        });
+
+        this.btnSell.addEventListener('click', () => {
+            if (this.onOrderSubmit) {
+                this.onOrderSubmit(this.inputType.ariaValueMax, 'sell', this.inputQty.value, this.inputPrice.value);
+            }
         });
     }
 }
