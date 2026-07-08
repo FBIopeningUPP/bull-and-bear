@@ -28,6 +28,17 @@ export class CandlestickChart {
     }
 
     draw() {
+        const currentWidth = this.canvas.parentElement.clientWidth;
+        const currentHeight = this.canvas.parentElement.clientHeight;
+
+        if (this.width !== currentWidth || this.height !== currentHeight) {
+            this.width = currentWidth;
+            this.height = currentHeight;
+            this.canvas.width = this.width * 2;
+            this.canvas.height = this.height * 2;
+            this.ctx.scale(2, 2);
+        }
+
         this.ctx.clearRect(0, 0, this.width, this.height);
 
         if (this.candles.length === 0) return;
@@ -43,17 +54,18 @@ export class CandlestickChart {
             if (c.high > maxPrice) maxPrice = c.high;
         }
 
-        const padding = (maxPrice - minPrice) * 0.05;
+        const padding = (maxPrice - minPrice) * 0.1;
         minPrice -= padding;
         maxPrice += padding;
 
-        const priceRange = maxPrice - minPrice;
+        let priceRange = maxPrice - minPrice;
+
+        if (priceRange === 0) priceRange = 1; 
 
         let x = this.width - (this.candleWidth + this.spacing);
 
-        for (let i = visibleCandles.length - 1; i >=0; i--) {
+        for (let i = visibleCandles.length - 1; i >= 0; i--) {
             const c = visibleCandles[i];
-
             const getPos = (price) => {
                 return this.height - ((price - minPrice) / priceRange) * this.height;
             };
@@ -74,7 +86,7 @@ export class CandlestickChart {
 
             const bodyY = Math.min(yOpen, yClose);
             let bodyHeight = Math.abs(yClose - yOpen);
-            if  (bodyHeight < 1) bodyHeight = 1;
+            if (bodyHeight < 1) bodyHeight = 1;
 
             this.ctx.fillRect(x, bodyY, this.candleWidth, bodyHeight);
 
