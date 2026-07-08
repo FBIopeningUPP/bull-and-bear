@@ -1,4 +1,4 @@
-export class orderBook {
+export class OrderBook {
     constructor(assetName) {
         this.assetName = assetName;
         

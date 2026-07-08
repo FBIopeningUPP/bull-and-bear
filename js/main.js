@@ -72,7 +72,7 @@ ui.onSpeedChange = (newSpeedMs) => {
 ui.onOrderSubmit = (type, side, qty, price) => {
     const order = activeBook.placeOrder(type, side, qty, price);
     if (type === 'market') {
-        pendingMarketOrders = order;
+        pendingMarketOrder = order;
     } else {
         console.log(`Limit ${side} placed at $${price} and added to Order Book.`);
     }
@@ -84,11 +84,11 @@ function gameLoop() {
     const techPrice = techFeed.tick(gameTime);
     const goldPrice = goldFeed.tick(gameTime);
     const cryptoPrice = cryptoFeed.tick(gameTime);
-    techBook.processTick(techPriec, activeFeed === techFeed ? pendingMarketOrders : null);
-    goldBook.processTick(goldPrice, activeFeed === goldFeed ? pendingMarketOrders : null);
-    cryptoBook.processTick(cryptoPrice, activeFeed === cryptoFeed ? pendingMarketOrders : null);
+    techBook.processTick(techPrice, activeFeed === techFeed ? pendingMarketOrder : null);
+    goldBook.processTick(goldPrice, activeFeed === goldFeed ? pendingMarketOrder : null);
+    cryptoBook.processTick(cryptoPrice, activeFeed === cryptoFeed ? pendingMarketOrder : null);
 
-    pendingMarketOrders = null;
+    pendingMarketOrder = null;
 
     console.log(`Time: ${gameTime} | TECH: ${techPrice.toFixed(2)} | GOLD: ${goldPrice.toFixed(2)} | CRYPTO: ${cryptoPrice.toFixed(2)}`);
 
