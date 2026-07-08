@@ -1,6 +1,7 @@
 import { PriceFeed } from './priceFeed.js';
 import { CandlestickChart } from './candlestick.js';
 import { UIController } from './ui.js';
+import { OrderBook } from './orderBook.js';
 
 const techFeed = new PriceFeed({
     name: 'TECH',
@@ -23,6 +24,19 @@ const cryptoFeed = new PriceFeed({
     sigma: 0.015
 });
 
+const techBook = new OrderBook('TECH');
+const goldBook = new OrderBook('GOLD');
+const cryptoBook = new OrderBook('CRYPTO');
+
+const logTrade = (assetName, order) => {
+    console.log(`TRADE FILLED! ${asset} ${trade.side.toUpperCase()} ${trade.qty} shares @ $${trade.executePrice.toFixed(2)}`);
+};
+
+techBook.onTrade = logTrade;
+goldBook.onTrade = logTrade;
+cryptoBook.onTrade = logTrade;
+
+
 let gameTime = 0;
 let loopInterval = null;
 let speedMs = 500;
@@ -34,9 +48,9 @@ let activeFeed = techFeed;
 let isPaused = false;
 
 ui.onTabChange = (assetName) => {
-    if (assetName === 'TECH') activeFeed = techFeed;
-    if (assetName === 'GOLD') activeFeed = goldFeed;
-    if (assetName === 'CRYPTO') activeFeed = cryptoFeed;
+    if (assetName === 'TECH') { activeFeed = techFeed; activeBook = techBook; }
+    if (assetName === 'GOLD') { activeFeed = goldFeed; activeBook = goldBook; }
+    if (assetName === 'CRYPTO') { activeFeed = cryptoFeed; activeBook = cryptoBook; }
 
     chart.updateData(activeFeed.candles, activeFeed.currentCandle);
 };
@@ -55,12 +69,26 @@ ui.onSpeedChange = (newSpeedMs) => {
     if (!isPaused) startEngine();
 };
 
+ui.onOrderSubmit = (type, side, qty, price) => {
+    const order = activeBook.placeOrder(type, side, qty, price);
+    if (type === 'market') {
+        pendingMarketOrders = order;
+    } else {
+        console.log(`Limit ${side} placed at $${price} and added to Order Book.`);
+    }
+};
+
 function gameLoop() {
     gameTime += 1;
 
     const techPrice = techFeed.tick(gameTime);
     const goldPrice = goldFeed.tick(gameTime);
     const cryptoPrice = cryptoFeed.tick(gameTime);
+    techBook.processTick(techPriec, activeFeed === techFeed ? pendingMarketOrders : null);
+    goldBook.processTick(goldPrice, activeFeed === goldFeed ? pendingMarketOrders : null);
+    cryptoBook.processTick(cryptoPrice, activeFeed === cryptoFeed ? pendingMarketOrders : null);
+
+    pendingMarketOrders = null;
 
     console.log(`Time: ${gameTime} | TECH: ${techPrice.toFixed(2)} | GOLD: ${goldPrice.toFixed(2)} | CRYPTO: ${cryptoPrice.toFixed(2)}`);
 
