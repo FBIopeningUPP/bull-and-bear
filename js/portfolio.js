@@ -14,7 +14,7 @@ export class Portfolio {
         };
     }
 
-    addTrade(asset, size, qty, price) {
+    addTrade(asset, side, qty, price) {
         const totalValue = qty * price;
 
         if (side === 'buy') {
@@ -38,7 +38,7 @@ export class Portfolio {
     getMetrics(currentPrices) {
         let unrealizedPnL = 0;
         
-        for (let asses in this.positions) {
+        for (let asset in this.positions) {
             const shares = this.positions[asset];
             if (shares > 0) {
                 const currentPrice = currentPrices[asset];

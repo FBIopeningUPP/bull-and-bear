@@ -2,6 +2,7 @@ import { PriceFeed } from './priceFeed.js';
 import { CandlestickChart } from './candlestick.js';
 import { UIController } from './ui.js';
 import { OrderBook } from './orderBook.js';
+import { Portfolio } from './portfolio.js';
 
 const techFeed = new PriceFeed({
     name: 'TECH',
@@ -27,9 +28,11 @@ const cryptoFeed = new PriceFeed({
 const techBook = new OrderBook('TECH');
 const goldBook = new OrderBook('GOLD');
 const cryptoBook = new OrderBook('CRYPTO');
+const myPortfolio = new Portfolio(10000.00);
 
 const logTrade = (trade, asset) => {
     console.log(`TRADE FILLED! ${asset} ${trade.side.toUpperCase()} ${trade.qty} shares @ $${trade.executePrice.toFixed(2)}`);
+    myPortfolio.addTrade(asset, trade.side, trade.qty, trade.executePrice);
 };
 
 techBook.onTrade = logTrade;
@@ -96,6 +99,21 @@ function gameLoop() {
     console.log(`Time: ${gameTime} | TECH: ${techPrice.toFixed(2)} | GOLD: ${goldPrice.toFixed(2)} | CRYPTO: ${cryptoPrice.toFixed(2)}`);
 
     chart.updateData(activeFeed.candles, activeFeed.currentCandle);
+
+    const currentPrices = {
+        'TECH': techPrice,
+        'GOLD': goldPrice,
+        'CRYPTO': cryptoPrice
+    };
+
+    const metrics = myPortfolio.getMetrics(currentPrices);
+
+    document.getElementById('stat-equity').innerText = '$' + metrics.equity.toFixed(2);
+    document.getElementById('stat-cash').innerText = '$' + metrics.cash.toFixed(2);
+    document.getElementById('stat-unrealized').innerText = '$' + metrics.unrealizedPnL.toFixed(2);
+    document.getElementById('stat-day').innerText = `Day ${gameTime}`;
+
+    document.getElementById('stat-unrealized').style.color = metrics.unrealizedPnL >= 0 ? '#10b981' : '#ef4444';
 }
 
 function startEngine() {
