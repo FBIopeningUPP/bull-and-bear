@@ -4,6 +4,7 @@ import { UIController } from './ui.js';
 import { OrderBook } from './orderBook.js';
 import { Portfolio } from './portfolio.js';
 import { EquityChart } from './equityChart.js';
+import { MarketMakerBot, WhaleBot, BotManager } from './bots.js';
 
 const techFeed = new PriceFeed({
     name: 'TECH',
