@@ -54,6 +54,7 @@ const dbManager = new DatabaseManager();
 
 dbManager.connect().then(() => {
     console.log("Database connected successfully.");
+    winManager.loadWindowPositions(dbManager);
 }).catch((err) => {
     console.error("Database connection failed:", err);
 });

@@ -192,4 +192,36 @@ export class WindowManager {
         win.style.zIndex = this.highestZIndex;
         this.activeWindow = win;
     }
+
+    async loadWindowPositions(dbManager) {
+        if(!dbManager) return;
+
+        try {
+            const settings = await dbManager.getAll('settings');
+
+            if(!settings || settings.length === 0) {
+                console.log("No saved window layout found. Using default layout.");
+                return;
+            }
+
+            let restoredCount = 0;
+
+            for (let sitting of settings) {
+                if(setting.key.startsWith('win_') && setting.key.endsWith('_pos')) {
+                    const winId = setting.key.replace('win_', '').replace('_pos', '');
+                    const win = document.getElementById(winId);
+
+                    if (win && setting.value) {
+                        win.style.left = setting.value.x;
+                        win.style.top = setting.value.y;
+                        restoredCount++;
+                    }
+                }
+            }
+
+            console.log(`OS Boot seq complete. retored ${restoredCount} window positions from DB.`);
+        } catch (error) {
+            console.error("Critical faliure: couldnt load window position", error);
+        }
+    }
 }
