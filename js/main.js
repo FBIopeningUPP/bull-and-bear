@@ -110,27 +110,6 @@ const algoTerminalHTML = `
 `;
 winManager.createWindow('win-algo-terminal', 'Algo Research Terminal', algoTerminalHTML, 200, 150, 500, 400);
 
-ui.onRunAlgo = (strategy) => {
-    const consoleDiv = document.getElementById('algo-console');
-    consolveDiv.innerHTML = `<span style="color: #facc15;">[SYS] Initializing Backtest Engine...</span><br>`;
-
-    setTimeout(() => {
-        consoleDiv.innerHTML += `<span style="color: #3b82f6;">[DATA] Generating 10 years of Geometric Brownian Motion...</span><br>`;
-
-        setTimeout(() => {
-            const history = backtestEngine.generatePriceHistory(10 * 252, 100, 0.0002, 0.003);
-            consoleDiv.innerHTML += `<span style="color: #10b981;">[SYS] Executing ${strategy} over ${history.length} simulated days...</span><br>`;
-
-            const results = backtestEngine.runStrategy(strategy, history);
-
-            let output = `<br><span style="color: #f8fafc; font-weight: bold;">====== PERFORMANCE REPORT ======</span><br>`;
-            output += `<span style="color: var(--text-muted);">Final Capital:</span> $${results.finalCapital.toFixed(2)}<br>`;
-            output += `<span style="color: var(--text-muted);">Total Trades Executed:</span> ${results.totalTrades}<br>`;
-            output += `<span style="color: var(--text-muted);">Simulation Time:</span> ${(Math.random() * 0.5 + 0.1).toFixed(3)}s<br>`;
-            output += `<span style="color: #10b981; font-weight:bold;">> [END OF REPORT]</span><br>`;
-        }, 600);
-    }, 400);
-}
 
 const techBots = new BotManager();
 techBots.addBot(new MarketMakerBot('Tech-MM-1', techBook));
@@ -176,6 +155,28 @@ const eqChart = new EquityChart('equity-chart');
 const equityHistory = [];
 
 const ui = new UIController();
+
+ui.onRunAlgo = (strategy) => {
+    const consoleDiv = document.getElementById('algo-console');
+    consoleDiv.innerHTML = `<span style="color: #facc15;">[SYS] Initializing Backtest Engine...</span><br>`;
+
+    setTimeout(() => {
+        consoleDiv.innerHTML += `<span style="color: #3b82f6;">[DATA] Generating 10 years of Geometric Brownian Motion...</span><br>`;
+
+        setTimeout(() => {
+            const history = backtestEngine.generateHistoricalData(2520, 150, 0.0002, 0.015);
+            consoleDiv.innerHTML += `<span style="color: #10b981;">[SYS] Executing ${strategy} over ${history.length} simulated days...</span><br>`;
+
+            const results = backtestEngine.runBacktest(history, strategy);
+
+            let output = `<br><span style="color: #f8fafc; font-weight: bold;">====== PERFORMANCE REPORT ======</span><br>`;
+            output += `<span style="color: var(--text-muted);">Final Capital:</span> $${results.finalCapital.toFixed(2)}<br>`;
+            output += `<span style="color: var(--text-muted);">Total Trades Executed:</span> ${results.totalTrades}<br>`;
+            output += `<span style="color: var(--text-muted);">Simulation Time:</span> ${(Math.random() * 0.5 + 0.1).toFixed(3)}s<br>`;
+            output += `<span style="color: #10b981; font-weight:bold;">> [END OF REPORT]</span><br>`;
+        }, 600);
+    }, 400);
+}
 
 let activeFeed = techFeed;
 let activeBook = techBook;

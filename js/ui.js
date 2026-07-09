@@ -17,6 +17,9 @@ export class UIController {
         this.onSpeedChange = null;
         this.onPauseToggle = null;
 
+        this.toggleAlgo = document.getElementById('toggle-algo');
+        this.onRunAlgo = null;
+
         this.bindEvents();
     }
 
@@ -34,6 +37,11 @@ export class UIController {
                 const qty = document.getElementById('order-qty').value;
                 const price = document.getElementById('order-price').value;
                 if (this.onOrderSubmit) this.onOrderSubmit(type, 'sell', qty, price);
+            }
+
+            if (e.target && e.target.id === 'btn-run-algo') {
+                const strategy = document.getElementById('algo-strategy').value;
+                if (this.onRunAlgo) this.onRunAlgo(strategy);
             }
         });
 
@@ -93,7 +101,10 @@ export class UIController {
         }
         if (this.onPauseToggle) this.onPauseToggle();
     }); 
+    
+    this.toggleAlgo.addEventListener('click', () => toggleWindow('win-algo-terminal'));
 }
+
     renderOrderBook(orderBook, currentPrice) {
         const display = document.getElementById('order-book-display');
 
