@@ -50,6 +50,12 @@ export class WindowManager {
             this.isResizing = false;
             if (this.activeWindow) {
                 this.activeWindow.style.opacity = '1';
+                if (this.dbManager) {
+                    this.dbManager.saveSetting(`win_${this.activeWindow.id}_pos`, { 
+                        x: this.activeWindow.style.left, 
+                        y: this.activeWindow.style.top 
+                    });
+                }
             }
         });
     }

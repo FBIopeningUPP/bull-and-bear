@@ -48,6 +48,7 @@ const newsEngine = new NewsEngine(feedsMap);
 const notificationSystem = new NotificationSystem();
 
 const winManager = new WindowManager('desktop');
+winManager.dbManager = dbManager;
 
 const dbManager = new DatabaseManager();
 

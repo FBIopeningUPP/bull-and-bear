@@ -10,6 +10,7 @@ export class DatabaseManager {
             const request = indexedDB.open(this.dbName, this.version);
 
             request.onupgradeneeded = (event) => {
+                const db = event.target.result;
                 if(!db.objectStoreNames.contains('trades')) {
                     const tradeStore = db.createObjectStore('trades', { keyPath: 'id', autoIncrement: true });
                     tradeStore.createIndex('asset', 'asset', { unique: false });
@@ -42,11 +43,12 @@ export class DatabaseManager {
 
     async insert(storeName, data) {
         if (!this.db) await this.connect();
+
         return new Promise((resolve, reject) => {
-            const transaction = this.db.transaction([storeName], 'readonly');
+            const transaction = this.db.transaction([storeName], 'readwrite');
             const store = transaction.objectStore(storeName);
 
-            const request = store.getAll();
+            const request = store.add(data);
 
             request.onsuccess = () => resolve(request.result);
             request.onerror = (e) => reject(e.target.error);
