@@ -36,7 +36,13 @@
 
         <main class="workspace" id="desktop" style="position: relative; overflow: hidden; display: block;">
 
-            <section class="chart-section">
+        <section class="chart-section">
+            <div class="drawing-toolbar glass-panel">
+                <button id="tool-trendline" class="btn tool-btn" title="Draw Trendline">📈</button>
+                <button id="tool-horizontal" class="btn tool-btn" title="Horizontal Support">➖</button>
+                <button id="tool-fibonacci" class="btn tool-btn" title="Fibonacci Retracement">📊</button>
+                <button id="tool-clear" class="btn tool-btn" title="Clear Drawings">🗑️</button>
+            </div>
                 <div id="chart-view" class="canvas-container">
                     <canvas id="main-chart"></canvas>
                 </div>

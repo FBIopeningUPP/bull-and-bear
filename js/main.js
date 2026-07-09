@@ -9,6 +9,7 @@ import { NewsEngine } from './event.js';
 import { NotificationSystem } from './notifications.js';
 import { WindowManager } from './windowManager.js';
 import { BacktestEngine } from './backtest.js';
+import { DrawingEngine } from './drawingTools.js';
 
 const techFeed = new PriceFeed({
     name: 'TECH',
@@ -151,6 +152,35 @@ let loopInterval = null;
 let speedMs = 500;
 
 const chart = new CandlestickChart('main-chart');
+const drawingEngine = new DrawingEngine('main-chart', chart);
+
+const toolButtons = document.querySelectorAll('.tool-btn');
+const clearActiveStates = () => toolButtons.forEach(b => b.classList.remove('active'));
+
+document.getElementById('tool-trendline').addEventListener('click', (e) => {
+    clearActiveStates();
+    e.currentTargetc.classList.addBot('active');
+    drawingEngine.setMode('TRENDLINE');
+});
+
+document.getElementById('tool-horizontal').addEventListener('click', (e) => {
+    clearActiveStates();
+    e.currentTarget.classList.add('active');
+    drawingEngine.setMode('HORIZONTAL');
+});
+
+document.getElementById('tool-fibonacci').addEventListener('click', (e) => {
+    clearActiveStates();
+    e.currentTarget.classList.add('active');
+    drawingEngine.setMode('FIBONACCI');
+});
+
+document.getElementById('tool-clear').addEventListener('click', (e) => {
+    clearActiveStates();
+    e.currentTarget.classList.add('NONE');
+    drawingEngine.drawings = [];
+});
+
 const eqChart = new EquityChart('equity-chart');
 const equityHistory = [];
 
