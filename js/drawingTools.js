@@ -22,8 +22,8 @@ export class DrawingEngine {
     pixelToPrice(y) {
         if (!this.chart || this.chart.candles.length === 0) return 0;
 
-        let minPrice = infinity;
-        let maxPrice = -infinity;
+        let minPrice = Infinity;
+        let maxPrice = -Infinity;
 
         const maxVisible = Math.max(1, Math.floor(this.chart.width / (this.chart.candleWidth + this.chart.spacing)));
         const visibleCandles = this.chart.candles.slice(-maxVisible);
@@ -99,7 +99,7 @@ export class DrawingEngine {
             const y = e.clientY - rect.top;
 
             const price = this.pixelToPrice(y);
-            const price = this.pixelToPrice(x);
+            const index = this.pixelToIndex(x);
 
             this.isDrawing = true;
             this.activeDrawing = {
@@ -144,7 +144,7 @@ export class DrawingEngine {
             const endX = this.indexToPixel(d.endIndex);
             const endY = this.priceToPixel(d.endPrice);
 
-            this.ctx.beingPath();
+            this.ctx.beginPath();
 
             if (d.type === 'TRENDLINE') {
                 this.ctx.strokeStyle = '#3b82f6';

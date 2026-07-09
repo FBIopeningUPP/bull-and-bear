@@ -10,6 +10,7 @@ import { NotificationSystem } from './notifications.js';
 import { WindowManager } from './windowManager.js';
 import { BacktestEngine } from './backtest.js';
 import { DrawingEngine } from './drawingTools.js';
+import { DatabaseManager } from './database.js';
 
 const techFeed = new PriceFeed({
     name: 'TECH',
@@ -47,6 +48,14 @@ const newsEngine = new NewsEngine(feedsMap);
 const notificationSystem = new NotificationSystem();
 
 const winManager = new WindowManager('desktop');
+
+const dbManager = new DatabaseManager();
+
+dbManager.connect().then(() => {
+    console.log("Database connected successfully.");
+}).catch((err) => {
+    console.error("Database connection failed:", err);
+});
 
 const orderEntryHTML = `
     <div class="form-group" style="padding-top: 10px;">
@@ -130,15 +139,28 @@ cryptoBots.addBot(new WhaleBot('Crypto-Whale-2', cryptoBook));
 
 const logTrade = (trade, asset) => {
     if(trade.isUser) {
-        myPortfolio.addTrade(asset, trade.size, trade.qty, trade.executePrice);
+        myPortfolio.addTrade(asset, trade.side, trade.qty, trade.executePrice);
 
-        const type = trade.side === 'buy' ? 'success' : 'warnign';
+        const type = trade.side === 'buy' ? 'success' : 'warning';
         notificationSystem.show(
             'Trade Executed',
             `${trade.side.toUpperCase()} ${trade.qty} ${asset} @ $${trade.executePrice.toFixed(2)}`,
             type
         );
         ui.addLedgerEntry(trade, asset);
+
+        const tradeRecord = {
+            asset: asset,
+            side: trade.side,
+            qty: trade.qty,
+            price: trade.executePrice,
+            executeTime: trade.executeTime,
+            txHash: 'tx_' + Math.random().toString(36).substr(2, 9)
+        };
+
+        dbManager.insert('trades', tradeRecord).then(() => {
+            console.log(`Trade ${tradeRecord.txHast} securely written to disk.`);
+        });
     }
 };
 
@@ -159,7 +181,7 @@ const clearActiveStates = () => toolButtons.forEach(b => b.classList.remove('act
 
 document.getElementById('tool-trendline').addEventListener('click', (e) => {
     clearActiveStates();
-    e.currentTargetc.classList.addBot('active');
+    e.currentTarget.classList.add('active');
     drawingEngine.setMode('TRENDLINE');
 });
 
