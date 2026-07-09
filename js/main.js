@@ -47,10 +47,9 @@ const newsEngine = new NewsEngine(feedsMap);
 
 const notificationSystem = new NotificationSystem();
 
+const dbManager = new DatabaseManager();
 const winManager = new WindowManager('desktop');
 winManager.dbManager = dbManager;
-
-const dbManager = new DatabaseManager();
 
 dbManager.connect().then(() => {
     console.log("Database connected successfully.");
