@@ -69,6 +69,10 @@ const orderEntryHTML = `
         <label>Quantity:</label>
         <input type="number" id="order-qty" step="0.01">
     </div>
+    <div class="form-group">
+        <label>Price (Limit):</label>
+        <input type="number" id="order-price" step="0.01" placeholder="Market Price">
+    </div>
     <div style="display: flex; gap: 10px; margin-top: 25px;">
         <button id="btn-buy" class="btn buy" style="flex:1; padding: 12px;">BUY</button>
         <button id="btn-sell" class="btn sell" style="flex:1; padding: 12px;">SELL</button>
@@ -199,7 +203,7 @@ document.getElementById('tool-fibonacci').addEventListener('click', (e) => {
 
 document.getElementById('tool-clear').addEventListener('click', (e) => {
     clearActiveStates();
-    e.currentTarget.classList.add('NONE');
+    drawingEngine.setMode('NONE');
     drawingEngine.drawings = [];
 });
 
@@ -301,6 +305,7 @@ function gameLoop() {
     console.log(`Time: ${gameTime} | TECH: ${techPrice.toFixed(2)} | GOLD: ${goldPrice.toFixed(2)} | CRYPTO: ${cryptoPrice.toFixed(2)}`);
 
     chart.updateData(activeFeed.candles, activeFeed.currentCandle);
+    drawingEngine.renderOverlays();
 
     const currentPrices = {
         'TECH': techPrice,

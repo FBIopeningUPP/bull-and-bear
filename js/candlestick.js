@@ -49,7 +49,7 @@ export class CandlestickChart {
 
         if (!this.candles || this.candles.length === 0) return;
 
-        const maxVisible = Math.max(1, Math.floor(this.width / (this.candleWdith + this.spacing)));
+        const maxVisible = Math.max(1, Math.floor(this.width / (this.candleWidth + this.spacing)));
         const visibleCandles = this.candles.slice(-maxVisible);
 
         let minPrice = Infinity;
