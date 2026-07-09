@@ -8,9 +8,9 @@ So i am a Commerce/NerdyTech Guy who finished his 12th with commerce as a stream
 
 # ScreenShots
 ### Main Page
-![alt text](screenshots\main-page.png)
+![alt text](screenshots/main-page.png)
 ### Portfolio and Equity Curve
-![alt text](screenshots\portfolio.png)
+![alt text](screenshots/portfolio.png)
 
 # How to use
 - click the top bar buttons so u can spawn windowws that are mentioned
